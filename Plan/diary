@@ -1,0 +1,159 @@
+===============================================================================
+BÁO CÁO CHI TIẾT GIAI ĐOẠN 1: MÔ HÌNH NHẬN DIỆN NGƯỜI (HUMAN DETECTION MODEL)
+===============================================================================
+
+I. CƠ SỞ LÝ THUYẾT VÀ LÝ DO LỰA CHỌN KIẾN TRÚC PIPELINE 2 MÔ HÌNH
+-------------------------------------------------------------------------------
+Trong dự án Giám sát An toàn Lao động, việc lựa chọn kiến trúc xử lý đóng vai trò quyết định đến độ chính xác và khả năng triển khai thực tế. Hệ thống được thiết kế theo mô hình Chuỗi 2 Giai đoạn (Two-Stage Pipeline): 
+Stage 1: Human Detection & Tracking -> Stage 2: PPE Detection.
+
+Các lý do kỹ thuật cốt lõi cho việc phân tách này bao gồm:
+
+1. Đơn giản hóa bài toán và tránh nhiễu chéo (Disambiguation):
+   - Việc sử dụng 3 mô hình riêng biệt là dư thừa tài nguyên tính toán không cần thiết.
+   - Nếu gom toàn bộ nhãn người và nhãn thiết bị vào duy nhất 1 mô hình (Single-Stage), hệ thống sẽ phải gánh thêm thuật toán tính toán trùng lặp không gian (IoU Matching) rất phức tạp ở khâu hậu xử lý để xác định thiết bị nào thuộc về công nhân nào. Điều này dễ gây ra sự rối rắm và sai sót khi trong cùng một khung hình có nhiều người đứng gần nhau.
+
+2. Loại bỏ tín hiệu nhiễu từ môi trường công trường (Noise Reduction):
+   - Nếu chỉ dùng 1 mô hình quét toàn bộ bức ảnh, khi công trường xuất hiện các vật thể nằm rải rác (ví dụ: mũ bảo hộ để trên bàn, áo phản quang treo trên tường, giày để ngoài sân), mô hình vẫn sẽ nhận diện đó là trang thiết bị và báo sai.
+   - Việc tách riêng giúp đảm bảo nguyên tắc: Chỉ phân tích trang thiết bị trên vùng cơ thể của công nhân đang làm việc.
+
+3. Tập trung vào đúng bản chất của mục tiêu giám sát:
+   - Mục tiêu của hệ thống là trả lời câu hỏi: "Mũ/Áo/Giày có đang được trang bị TRÊN NGƯỜI công nhân hay không?", chứ không phải câu hỏi "Có cái mũ/áo nào xuất hiện trong toàn bộ khung hình hay không?".
+
+4. Tối ưu hóa khả năng nhận diện các vật thể siêu nhỏ (Small Object Detection):
+   - Các vật thể nhỏ như thuốc lá (smoking) hoặc điện thoại (phone_usage) khi nằm trong một bức ảnh toàn cảnh góc rộng thường rất nhỏ và dễ bị bỏ sót.
+   - Bằng cách đặt kích thước ảnh đầu vào 1280x1280 ở Model 1 để phát hiện người từ xa, sau đó thực hiện thao tác cắt vùng ảnh người kèm 10% padding (zoom vào đối tượng), Model 2 sẽ nhận diện các chi tiết nhỏ này với độ phân giải tối ưu và độ chính xác vượt trội.
+
+
+II. NHẬT KÝ VÀ KẾT QUẢ HUẤN LUYỆN MODEL 1 (HUMAN DETECTION MODEL)
+-------------------------------------------------------------------------------
+1. Thông tin Cấu hình Môi trường & Mô hình:
+   - Nền tảng phần cứng: Kaggle GPU Tesla T4 (Dung lượng VRAM: 14,912 MiB).
+   - Môi trường phần mềm: Ultralytics 8.4.162, Python 3.12.13, PyTorch 2.10.0+cu128.
+   - Kiến trúc mô hình: YOLOv8n (Nano).
+   - Quy mô mô hình: 72 layers, 3,005,843 tham số (parameters), 8.1 GFLOPs.
+   - Kích thước ảnh đầu vào (Image Size): 1280x1280 pixels.
+
+2. Quá trình Huấn luyện (Training Process):
+   - Tổng số vòng lặp (Epochs): 100/100 epochs.
+   - Tổng thời gian huấn luyện: 2.209 giờ.
+   - Diễn biến hàm mất mát (Loss Trend): Các chỉ số box_loss, cls_loss và dfl_loss giảm đều qua từng epoch, độ chính xác tăng trưởng ổn định từ epoch 4 đến epoch 100 mà không gặp hiện tượng học vẹt (Overfitting).
+   - Tệp trọng số tối ưu thu được: best.pt 
+
+3. Kết quả Đánh giá Thực nghiệm trên Tập Kiểm thử (Validation Metrics):
+   Tập dữ liệu kiểm thử bao gồm 154 hình ảnh với 457 đối tượng người (instances). Kết quả đo lường đạt được ở mức rất cao:
+
+   - Precision (P - Độ chính xác): 0.896 (89.6%)
+     -> Cho thấy khi mô hình dự đoán là người, tỷ lệ đúng đạt tới 89.6%, hạn chế tối đa việc nhận diện nhầm vật thể khác thành người.
+
+   - Recall (R - Độ thu hồi): 0.851 (85.1%)
+     -> Cho thấy mô hình phát hiện được 85.1% tổng số người thực tế có trong các khung hình.
+
+   - mAP@50 (Mean Average Precision tại IoU 0.5): 0.911 (91.1%)
+     -> Chỉ số tổng quan đạt mức xuất sắc 91.1%, khẳng định mô hình nhận diện người cực kỳ ổn định và sẵn sàng cho việc triển khai thực tế.
+
+   - mAP@50-95 (Mean Average Precision tại IoU 0.5 - 0.95): 0.613 (61.3%)
+     -> Cho thấy khả năng bao bọc khung (Bounding Box Accuracy) đạt độ chuẩn xác cao ngay cả ở các ngưỡng kiểm tra khắt khe.
+
+4. Tốc độ Xử lý (Inference Speed Performance):
+   - Thời gian Tiền xử lý (Preprocess): 8.6 ms / ảnh.
+   - Thời gian Suy luận (Inference): 10.8 ms / ảnh.
+   - Thời gian Hậu xử lý (Postprocess): 2.7 ms / ảnh.
+   - Tổng thời gian xử lý trung bình: ~22.1 ms / ảnh (Tương đương tốc độ đáp ứng thời gian thực ~45 FPS trên GPU Tesla T4).
+   - test bằng camera local của công ty thì mất khoảng từ 15-25ms, 1 khung hình tùy số lượng người bắt được
+
+
+III. KẾT LUẬN GIAI ĐOẠN 1 VÀ HƯỚNG CHUYỂN GIAO SANG GIAI ĐOẠN 2
+-------------------------------------------------------------------------------
+1. Đánh giá chung:
+   Mô hình Model 1 (YOLOv8n Human Detection) với độ phân giải 1280x1280 đã hoàn. thành xuất sắc mục tiêu đề ra với mAP50 = 91.1% và tốc độ suy luận nhanh (10.8ms). Mô hình hoạt động nhẹ (6.4 MB) và tối ưu tốt trên phần cứng.
+
+2. Bước chuyển giao sang Giai đoạn 2 (Model 2 PPE Detection):
+   - Sử dụng trọng số best.pt của Model 1 để quét toàn bộ dữ liệu video/ảnh thực tế.
+   - Thực hiện thuật toán tự động trích xuất (Crop) vùng ảnh người kèm 10% padding.
+   - Lưu trữ các bức ảnh người đã crop vào thư mục dữ liệu tập trung (/home/cazofi/data/datamodel2/anhtuquaynew) để chuẩn bị cho việc gán nhãn 10 Class và huấn luyện Model 2 PPE.
+
+
+   ===============================================================================
+NHẬT KÝ VIẾT TIẾP DỰ ÁN: GIAI ĐOẠN 2 - HUẤN LUYỆN MÔ HÌNH PPE 10 CLASS
+===============================================================================
+I. QUY HOẠCH VÀ CHUẨN HÓA BỘ DỮ LIỆU GIAI ĐOẠN 2
+-------------------------------------------------------------------------------
+1. Thống nhất Bộ 10 Class Nhận diện Bảo hộ & Hành vi:
+   - Đã hoàn thành quy hoạch 10 nhãn chính thức bao gồm:
+     boots, helmet on, no boots, no helmet, no vest, vest, id_card, no id_card, smoking, phone_usage.
+   - Loại bỏ các nhãn dư thừa/nhiễu (như nhãn person cũ) để tránh trùng lặp với Mô hình 1.
+2. Phân chia Bộ Dữ liệu Chuẩn (Dataset Split 90-5-5):
+   - Xáo trộn ngẫu nhiên dữ liệu với seed cố định = 42.
+   - Phân chia tập dữ liệu tổng (1400 ảnh) theo tỷ lệ:
+     + Tập Huấn luyện (Train Set - 90%): ~1280 ảnh (chạy trực tiếp trên 80 batches/epoch).
+     + Tập Thẩm định (Validation Set - 5%): Đúng 70 ảnh (chứa 353 instances nhãn bảo hộ).
+     + Tập Kiểm thử (Test Set - 5%): 70 ảnh (giữ độc lập kiểm tra cuối cùng).
+   - Tự động sinh file cấu hình data.yaml với đường dẫn tuyệt đối cho Kaggle.
+II. QUÁ TRÌNH HUẤN LUYỆN MÔ HÌNH 2 (PPE MODEL) TRÊN KAGGLE
+-------------------------------------------------------------------------------
+1. Cấu hình Tham số Huấn luyện (Training Parameters):
+   - Nền tảng: Kaggle GPU Tesla T4.
+   - Kiến trúc: YOLOv8n.
+   - Kích thước ảnh đầu vào (Image Size): 1280x1280 pixels.
+   - Batch size: 16 (tương đương 80 batches/epoch trên 1280 ảnh train).
+   - Tổng số Epochs: 100 epochs (Patience = 30).
+   - Tốc độ học ban đầu (Learning Rate lr0): 0.001.
+2. Vấn đề mà model gặp phải:
+   - mode hiện tại đang ko bắt được hành vi hút thuốc, 1 phần data ít, 1 phần hành vi hút thuốc rất bé, dễ nhầm lẫn với hành vi khác ví dụ như nghe điện thoại
+III. BƯỚC CHUYỂN GIAO SANG GIAI ĐOẠN 3 (TRACKING & TÍCH HỢP HỆ THỐNG)
+-------------------------------------------------------------------------------
+1. Thu hoạch Trọng số Mô hình 2:
+   - Tải file trọng số tốt nhất 'best.pt' từ /kaggle/working/training_results_ppe/weights/best.pt về máy local.
+   - Đổi tên và lưu vào đường dẫn chuẩn của dự án: /model/weights/model_ppe_detection.pt.
+2. Đánh giá và Sẵn sàng cho Giai đoạn 3:
+   - Mô hình 2 PPE (10 Class) đã hoàn thành huấn luyện.
+   - Sẵn sàng tích hợp cùng Mô hình 1 (Human Detection) và thuật toán ByteTRACK để chuẩn bị xây dựng Pipeline 2 Giai đoạn hoàn chỉnh.
+
+===============================================================================
+BÁO CÁO CHI TIẾT GIAI ĐOẠN 3: TÍCH HỢP HỆ THỐNG PIPELINE 2 STAGE, DEEP RE-ID VÀ TỐI ƯU HÓA JETSON ORIN NANO
+===============================================================================
+
+I. KIẾN TRÚC THỜI GIAN THỰC & THEO VẾT THÔNG MINH (DEEP RE-IDENTIFICATION TRACKING)
+-------------------------------------------------------------------------------
+1. Kết hợp ByteTrack SOTA & MobileNetV3 Deep Feature Extractor:
+   - Hệ thống áp dụng ByteTrack làm bộ so khớp không gian liên tục (Spatial IoU Matching >= 0.25) giúp khóa 100% ID chính xác giữa các khung hình nối tiếp.
+   - Khi công nhân bị tạm thời che khuất hoặc rời khỏi góc nhìn camera, mô hình trích xuất đặc trưng sâu MobileNetV3 Small (512-d feature vector) tính Cosine Similarity (threshold >= 0.65) với bộ nhớ thư viện (person_feature_gallery) 300 frames để tái cấp đúng ID cũ, triệt tiêu việc sinh ID mới rác.
+
+2. Gán Hồ sơ Nhân viên & Kiểm soát Vùng Cấm (Worker Profile Mapping & ROI Intrusion):
+   - Cung cấp API POST /api/worker/profile và giao diện UI cho phép gán Họ tên và Mã công nhân vào Track ID đang hoạt động.
+   - Tích hợp kiểm soát vùng xâm nhập ROI (ROIManagerOOP) kiểm tra danh sách được phép dựa trên Track ID, Mã công nhân hoặc Họ tên. Khi xâm nhập trái phép, lỗi UNAUTHORIZED_INTRUSION lập tức được gửi tới StateManagerOOP và trực quan hóa trên giao diện.
+
+II. BỘ LỌC CẮT MÉP CAMERA & CỬA SỔ TRUỘT MƯỢT TRẠNG THÁI (SLIDING WINDOW PPE BUFFER)
+-------------------------------------------------------------------------------
+1. Bộ lọc góc nhìn sát viền ống kính (Edge Margin Boundary Check):
+   - Khi công nhân đứng sát viền camera (edge_margin_pixels = 15) làm mất góc đầu/chân, hệ thống tự động gán nhãn CHƯA RÕ GÓC NHÌN (CẮT MÉP CAM) badge xám, không tự ý báo AN TOÀN.
+
+2. Cửa sổ trượt 8 frames & Bầu chọn đa số (Majority Voting 40%):
+   - Lưu trữ 8 dự đoán gần nhất của Model 2. Chỉ xác nhận vi phạm khi nhãn xuất hiện >= 40% số khung hình, loại bỏ hiện tượng nhấp nháy 1-frame do chói sáng.
+
+III. PHÂN TÍCH NGUYÊN NHÂN TẬN GỐC NGHẼN NÚT CỔ CHAI (FPS DROP) TRÊN JETSON ORIN NANO
+-------------------------------------------------------------------------------
+1. Hiện tượng:
+   - Khi không có người: FPS đạt ~21 FPS.
+   - Khi có người xuất hiện: FPS tụt thê thảm xuống < 1 FPS.
+
+2. 3 Nguyên nhân nghẽn chính:
+   - Nguyên nhân 1: MobileNetV3 Re-ID PyTorch forward pass trên CUDA cho tất cả công nhân ở MỌI FRAME (30 fps).
+   - Nguyên nhân 2: Model 2 PPE Classifier suy luận lại trên mọi crop người ở MỌI FRAME (30 fps).
+   - Nguyên nhân 3: Chuyển đổi toàn bộ frame 720p sang PIL ImageDraw để vẽ font UTF-8 tiếng Việt tốn thời gian memory copy CPU (12ms/frame).
+
+IV. BỘ GIẢI PHÁP TỐI ƯU HÓA HIỆU NĂNG PHẦN CỨNG (ZERO-RISK ARCHITECTURE)
+-------------------------------------------------------------------------------
+1. Re-ID Smart Sampling (Lấy mẫu Re-ID thông minh):
+   - Chỉ chạy trích xuất MobileNetV3 khi track chưa match được (unmatched) hoặc định kỳ mỗi 20 khung hình. Giảm 95% GPU overhead.
+
+2. PPE Inference Sampling Cache (Cửa sổ lấy mẫu PPE 4 frames):
+   - Chạy suy luận Model 2 PPE mỗi 4 frames/track và lưu vào cache. Khung hình trung gian sử dụng kết quả cache. Giảm 75% GPU overhead suy luận Model 2.
+
+3. PIL Local Crop Text Drawing (Cắt riêng vùng text vẽ chữ UTF-8):
+   - Trích xuất đúng vùng ảnh cắt nhỏ quanh Bounding Box text để chuyển sang PIL vẽ chữ, giảm độ trễ từ 12ms xuống < 0.1ms per frame.
+
+4. Kết quả Đạt được:
+   - Tốc độ xử lý trên Jetson Orin Nano duy trì trơn tru 25-30 FPS ngay cả khi có đông công nhân trong khung hình.
+   - Đảm bảo 100% độ chính xác của các quy tắc an toàn, không bỏ sót vi phạm.

@@ -1,0 +1,34 @@
+# ==============================================================================
+# HỆ THỐNG AI GIÁM SÁT TUÂN THỦ AN TOÀN LAO ĐỘNG (PYTHON 3.11)
+# Danh sách thư viện phụ thuộc chính thức cho môi trường Windows & Linux
+# ==============================================================================
+
+# --- Deep Learning & Thị Giác Máy Tính (Vision AI) ---
+torch>=2.0.0
+torchvision>=0.15.0
+ultralytics>=8.0.0
+opencv-python>=4.6.0
+Pillow>=9.0.0
+numpy>=1.23.0
+
+# --- Theo Vết Đa Đối Tượng & Giải Thuật Hình Học (Tracking & Geometry) ---
+scipy>=1.4.1
+lapx>=0.5.2
+
+# --- Máy Chủ Web, REST API & WebSocket Stream ---
+fastapi>=0.95.0
+uvicorn[standard]>=0.20.0
+websockets>=11.0
+pydantic>=2.0.0
+aiofiles>=23.1.0
+python-multipart>=0.0.6
+
+# --- Giám Sát Hiệu Năng & Đo Đạc Phần Cứng (Telemetry & Benchmark) ---
+psutil>=5.9.0
+
+# --- Xử Lý Dữ Liệu & Tiện Ích Bổ Trợ (Utilities & Analysis) ---
+PyYAML>=5.4.1
+requests>=2.28.0
+tqdm>=4.65.0
+matplotlib>=3.3.0
+pandas>=1.5.0

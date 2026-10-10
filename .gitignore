@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C environments
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment variables
+.env
+.env.local
+
+# Virtual environments
+.venv/
+venv/
+venv_safety/
+env/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Databases & Runtime Logs
+logs/*.db
+logs/snapshots/*
+!logs/snapshots/.gitkeep
+logs/runtime_hardware_performance.log
+
+# TensorRT compiled engines (Hardware-specific)
+*.engine
+*.plan
+
+# Test output artifacts
+test/test_weight/*result*.jpg

@@ -1,0 +1,27 @@
+1. Nhóm Yêu cầu Định danh & Theo vết Liên tục (Continuous Tracking)
+Tracking 100% các hành vi trang thiết bị: Tất cả các hành vi sau khi được AI nhận diện (Mặc/không mặc áo phản quang, Đội/không đội mũ bảo hộ, Đeo/không đeo thẻ nhân viên, Đi/không đi giày bảo hộ) bắt buộc phải được tracking liên tục để định danh cố định người đó.
+Tracking các hành vi vi phạm tác phong: Theo vết liên tục đối tượng khi phát hiện các hành vi vi phạm: Hút thuốc, Nghe điện thoại, Chụp ảnh.
+Tracking khóa vết sau vi phạm (Lock-on Tracking): Khi phát hiện người vi phạm, khung theo vết màu đỏ phải bám theo người đó liên tục trong suốt thời gian họ còn ở trong khung hình.
+Tracking chuyển đổi trạng thái khắc phục: Theo vết sự thay đổi hành vi (Ví dụ: Đang thiếu mũ 
+→
+→ Đội mũ lên 
+→
+→ Tự động chuyển khung sang màu xanh và ghi nhận log đã bổ sung mũ thành công).
+2. Nhóm Yêu cầu Phân quyền Ra/Vào theo Vùng (Area Access Control)
+Gán định danh cứng cho người: Cho phép gán tên/Mã định danh cụ thể cho từng Track ID xuất hiện (Ví dụ: Người số 01 gán ID là AAA, Người số 02 gán ID là BBB).
+Phân quyền vùng làm việc (Area Authorization):
+Cấu hình quyền: Người AAA chỉ được phép vào Khu vực A; Người BBB chỉ được phép vào Khu vực B.
+Cảnh báo xâm nhập trái phép: Theo vết vị trí bước chân của từng người đối với ranh giới các vùng. Nếu người AAA đi vào Khu vực B 
+→
+→ Hệ thống lập tức phát cảnh báo xâm nhập trái phép và lưu lại log.
+3. Nhóm Yêu cầu Tương tác trên Giao diện Web UI (Web UI Integration)
+Gán ID trực tiếp trên Web: Giao diện Web UI phải có tính năng cho phép người quản lý bấm gán ID/Tên (AAA, BBB) cho các Track ID đang xuất hiện trên màn hình.
+Chỉnh sửa Vùng ROI ONLINE: Cho phép vẽ và thay đổi kích thước/vị trí Vùng ROI (Khu vực A, Khu vực B) trực tiếp trên Web UI thời gian thực (Áp dụng ngay lập tức mà KHÔNG cần dừng hay khởi động lại chương trình).
+Hiển thị luồng Live Stream: Hiển thị trực tiếp khung theo vết kèm Track ID, Tên người và danh sách các lỗi vi phạm ngay trên màn hình Web UI.
+4. Nhóm Yêu cầu Tối ưu hóa & Lưu vết Hệ thống (Constraints & Logging)
+Tối ưu tài nguyên Jetson Orin Nano: Thuật toán Tracking phải cực kỳ nhẹ, tối ưu RAM và CPU/GPU để hệ thống chạy thời gian thực (Realtime) trên thiết bị Jetson Orin Nano mà không gây tràn RAM hay đơ máy.
+Chống spam log dữ liệu: Dù tracking người vi phạm liên tục qua hàng nghìn frames, hệ thống chỉ lưu đúng 1 bản ghi cơ sở dữ liệu + 1 ảnh bằng chứng có gắn mốc thời gian thực cho mỗi đợt vi phạm.
+Vận hành OFFLINE 100%: Tất cả các bước nhận diện, tracking, ghi log và phát Web UI phải chạy độc lập trên thiết bị Edge PC mà không cần kết nối Internet hay dịch vụ Cloud.
+
+
+=> sử dụng byteTRACK

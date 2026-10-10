@@ -1,0 +1,95 @@
+=================================================================
+NHẬT KÝ ĐO ĐẠC HIỆU NĂNG VÀ THỜI GIAN XỬ LÝ PHẦN CỨNG
+Thời gian bắt đầu: 2026-10-10 20:28:38
+Thiết bị tính toán: cuda
+CUDA Khả dụng: True
+Tên GPU: NVIDIA GeForce RTX 4070
+=================================================================
+
+1. Đang khởi tạo Safety Pipeline Manager...
+Khởi tạo Pipeline thành công trong: 2.23 giây.
+
+Sử dụng ảnh test: D:\Project_github\tuan-thu-an-toan-lao-dong-mr-trung\tuan-thu-an-toan-lao-dong-mr-trung\test\test_weight\anh1.jpg (1280x853)
+
+2. Đang làm nóng mô hình (Warm-up 5 khung hình)...
+Làm nóng mô hình hoàn tất.
+
+3. TIẾN HÀNH XỬ LÝ 50 KHUNG HÌNH (IN VÀ GHI LOG TRỰC TIẾP):
+---------------------------------------------------------------------------
+Khung hình   | Thời gian (ms)  | FPS tức thời   | RAM (MB)     | CPU (%)   
+---------------------------------------------------------------------------
+Frame 01/50    |    43.52 ms     |   23.0 FPS      |  1841.9 MB  |   0.0%
+Frame 02/50    |    41.04 ms     |   24.4 FPS      |  1842.8 MB  | 133.0%
+Frame 03/50    |    46.92 ms     |   21.3 FPS      |  1839.6 MB  |  99.7%
+Frame 04/50    |    45.26 ms     |   22.1 FPS      |  1836.5 MB  |  99.7%
+Frame 05/50    |    38.15 ms     |   26.2 FPS      |  1836.5 MB  | 151.2%
+Frame 06/50    |    38.47 ms     |   26.0 FPS      |  1836.5 MB  |  66.5%
+Frame 07/50    |    36.83 ms     |   27.2 FPS      |  1836.5 MB  | 100.8%
+Frame 08/50    |    49.32 ms     |   20.3 FPS      |  1836.5 MB  | 133.0%
+Frame 09/50    |    45.00 ms     |   22.2 FPS      |  1836.5 MB  |  99.7%
+Frame 10/50    |    46.82 ms     |   21.4 FPS      |  1836.5 MB  |  99.7%
+Frame 11/50    |    49.54 ms     |   20.2 FPS      |  1836.5 MB  |  99.7%
+Frame 12/50    |    40.80 ms     |   24.5 FPS      |  1836.5 MB  |  66.5%
+Frame 13/50    |    40.25 ms     |   24.8 FPS      |  1836.5 MB  |  99.7%
+Frame 14/50    |    45.60 ms     |   21.9 FPS      |  1836.5 MB  |  66.5%
+Frame 15/50    |    37.30 ms     |   26.8 FPS      |  1836.5 MB  | 100.8%
+Frame 16/50    |    39.27 ms     |   25.5 FPS      |  1836.5 MB  | 151.2%
+Frame 17/50    |    39.78 ms     |   25.1 FPS      |  1836.5 MB  |  66.5%
+Frame 18/50    |    43.05 ms     |   23.2 FPS      |  1836.5 MB  |  99.7%
+Frame 19/50    |    46.64 ms     |   21.4 FPS      |  1836.5 MB  |  99.7%
+Frame 20/50    |    40.65 ms     |   24.6 FPS      |  1836.5 MB  | 151.2%
+Frame 21/50    |    47.38 ms     |   21.1 FPS      |  1836.5 MB  |  99.7%
+Frame 22/50    |    42.71 ms     |   23.4 FPS      |  1836.5 MB  |  66.5%
+Frame 23/50    |    52.15 ms     |   19.2 FPS      |  1836.5 MB  | 100.8%
+Frame 24/50    |    43.25 ms     |   23.1 FPS      |  1836.5 MB  | 151.2%
+Frame 25/50    |    45.49 ms     |   22.0 FPS      |  1836.5 MB  |  66.5%
+Frame 26/50    |    46.93 ms     |   21.3 FPS      |  1836.5 MB  | 133.0%
+Frame 27/50    |    44.45 ms     |   22.5 FPS      |  1836.5 MB  |  66.5%
+Frame 28/50    |    38.57 ms     |   25.9 FPS      |  1836.5 MB  |  99.7%
+Frame 29/50    |    38.17 ms     |   26.2 FPS      |  1836.5 MB  | 100.8%
+Frame 30/50    |    42.72 ms     |   23.4 FPS      |  1839.6 MB  |  99.7%
+Frame 31/50    |    45.39 ms     |   22.0 FPS      |  1839.7 MB  |  99.7%
+Frame 32/50    |    42.49 ms     |   23.5 FPS      |  1836.5 MB  | 151.2%
+Frame 33/50    |    42.88 ms     |   23.3 FPS      |  1836.5 MB  |  66.5%
+Frame 34/50    |    49.03 ms     |   20.4 FPS      |  1836.5 MB  |  99.7%
+Frame 35/50    |    46.52 ms     |   21.5 FPS      |  1836.5 MB  |  99.7%
+Frame 36/50    |    39.92 ms     |   25.0 FPS      |  1836.5 MB  |  66.5%
+Frame 37/50    |    42.74 ms     |   23.4 FPS      |  1836.5 MB  |  99.7%
+Frame 38/50    |    44.48 ms     |   22.5 FPS      |  1836.5 MB  | 100.8%
+Frame 39/50    |    40.65 ms     |   24.6 FPS      |  1836.5 MB  |  66.5%
+Frame 40/50    |    42.25 ms     |   23.7 FPS      |  1836.5 MB  |  99.7%
+Frame 41/50    |    39.94 ms     |   25.0 FPS      |  1836.5 MB  | 151.2%
+Frame 42/50    |    49.95 ms     |   20.0 FPS      |  1836.5 MB  |  75.6%
+Frame 43/50    |    50.29 ms     |   19.9 FPS      |  1836.5 MB  |  99.7%
+Frame 44/50    |    53.60 ms     |   18.7 FPS      |  1836.5 MB  |  99.7%
+Frame 45/50    |    41.06 ms     |   24.4 FPS      |  1836.5 MB  |  99.7%
+Frame 46/50    |    45.98 ms     |   21.7 FPS      |  1836.5 MB  |  99.7%
+Frame 47/50    |    56.85 ms     |   17.6 FPS      |  1836.5 MB  | 133.0%
+Frame 48/50    |    41.90 ms     |   23.9 FPS      |  1836.5 MB  |  66.5%
+Frame 49/50    |    37.92 ms     |   26.4 FPS      |  1836.5 MB  | 151.2%
+Frame 50/50    |    36.43 ms     |   27.4 FPS      |  1836.5 MB  |  66.5%
+---------------------------------------------------------------------------
+
+=================================================================
+BÁO CÁO TỔNG KẾT HIỆU NĂNG VÀ ĐỘ MƯỢT
+=================================================================
+1. TỐC ĐỘ VÀ ĐỘ TRỄ:
+   - Tốc độ trung bình: 22.87 FPS
+   - Độ trễ trung bình: 43.73 ms
+   - Độ trễ thấp nhất:  36.43 ms
+   - Độ trễ cao nhất:   56.85 ms
+   - Đánh giá: RẤT MƯỢT (Đạt tiêu chuẩn thời gian thực >= 20 FPS)
+
+2. TÀI NGUYÊN BỘ NHỚ RAM:
+   - RAM tiến trình Python chiếm: 1836.52 MB
+   - Tổng RAM toàn máy: 15.19 GB / 31.82 GB (47.7%)
+
+3. TẢI VI XỬ LÝ CPU:
+   - CPU trung bình sử dụng: 101.27%
+
+4. BỘ NHỚ ĐỒ HỌA GPU (VRAM):
+   - VRAM phân bổ thực tế: 22.46 MB
+   - VRAM bộ đệm dự phòng: 64.00 MB
+=================================================================
+Nhật ký đo đạc đã được lưu thành công vào: D:\Project_github\tuan-thu-an-toan-lao-dong-mr-trung\tuan-thu-an-toan-lao-dong-mr-trung\logs\hardware_benchmark_latency.log
+
